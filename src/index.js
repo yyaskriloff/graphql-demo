@@ -30,6 +30,13 @@ const resolvers = {
             }
             links.push(link)
             return link
+        },
+        updateLink: (parent, args) => {
+            let link = links.filter(link => link.id === args.id)
+            const index = links.indexOf(link[0])
+            link = { ...link[0], ...args }
+            links[index] = link
+            return link
         }
     },
 }

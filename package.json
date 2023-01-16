@@ -19,7 +19,11 @@
   },
   "homepage": "https://github.com/yyaskriloff/graphql-demo#readme",
   "dependencies": {
+    "@prisma/client": "^4.8.1",
     "apollo-server": "^2.26.1",
     "graphql": "^14.7.0"
+  },
+  "devDependencies": {
+    "prisma": "^4.8.1"
   }
 }

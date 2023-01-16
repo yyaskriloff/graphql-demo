@@ -12,33 +12,13 @@ const resolvers = {
     Query: {
         info: () => `This is the API of a Hackernews Clone`,
         feed: async (parent, args, context) => context.prisma.link.findMany(),
-        link: (parent, { id }, context) => context.prisma.link.findUnique({
-            where: { id: id }
-        })
+        link: (parent, { id }, context) => context.prisma.link.findUnique({ where: { id } })
     },
     Mutation: {
-        post: (parent, args, context, info) => {
-            const newLink = context.prisma.link.create({
-                data: {
-                    url: args.url,
-                description: args.description,
-                },
-            })
-            return newLink
-        },
-        updateLink: (parent, args) => {
-            let link = links.filter(link => link.id === args.id)
-            const index = links.indexOf(link[0])
-            link = { ...link[0], ...args }
-            links[index] = link
-            return link
-        },
-        deleteLink: (parent, args) => {
-            let link = links.filter(link => link.id === args.id)
-            if (!link[0]) return null
-            link = links.shift(link[0])
-            return link
-        }
+        post: async (parent, { url, description }, context, info) => context.prisma.link.create({ data: { url, description } }),
+        updateLink: async (parent, args, context) => context.prisma.link.update({ where: { id: args.id }, data: { ...args } }),
+        deleteLink: async (parent, { id }, context) => context.prisma.link.delete({ where: { id } })
+
     },
 }
 

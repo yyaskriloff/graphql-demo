@@ -37,6 +37,12 @@ const resolvers = {
             link = { ...link[0], ...args }
             links[index] = link
             return link
+        },
+        deleteLink: (parent, args) => {
+            let link = links.filter(link => link.id === args.id)
+            if (!link[0]) return null
+            link = links.shift(link[0])
+            return link
         }
     },
 }

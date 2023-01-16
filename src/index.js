@@ -1,4 +1,6 @@
 import { ApolloServer } from 'apollo-server'
+import fs from 'fs'
+import path from 'path'
 
 let links = [{
     id: 'link-0',
@@ -20,7 +22,10 @@ const resolvers = {
 }
 
 const server = new ApolloServer({
-    typeDefs,
+    typeDefs: fs.readFileSync(
+        path.join(__dirname, 'schema.graphql'),
+        'utf8'
+    ),
     resolvers,
 })
 

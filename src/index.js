@@ -1,4 +1,6 @@
 import { ApolloServer } from 'apollo-server'
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient()
 import fs from 'fs'
 import path from 'path'
 import url from 'url';
@@ -6,30 +8,23 @@ import url from 'url';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let links = [{
-    id: 'link-0',
-    url: 'www.howtographql.com',
-    description: 'Fullstack tutorial for GraphQL'
-}]
-
 const resolvers = {
     Query: {
         info: () => `This is the API of a Hackernews Clone`,
-        feed: () => links,
-        link: (parent, { id }) => links.filter(link => link.id === id)[0]
+        feed: async (parent, args, context) => context.prisma.link.findMany(),
+        link: (parent, { id }, context) => context.prisma.link.findUnique({
+            where: { id: id }
+        })
     },
     Mutation: {
-        post: (parent, args) => {
-
-            let idCount = links.length
-
-            const link = {
-                id: `link-${idCount++}`,
+        post: (parent, args, context, info) => {
+            const newLink = context.prisma.link.create({
+                data: {
+                    url: args.url,
                 description: args.description,
-                url: args.url,
-            }
-            links.push(link)
-            return link
+                },
+            })
+            return newLink
         },
         updateLink: (parent, args) => {
             let link = links.filter(link => link.id === args.id)
@@ -53,6 +48,9 @@ const server = new ApolloServer({
         'utf8'
     ),
     resolvers,
+    context: {
+        prisma,
+    }
 })
 
 server
